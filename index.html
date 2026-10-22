@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missão Lógica: Desafio dos Robôs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #eef2f5;
+            color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .game-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+
+        #progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            transition: width 0.4s ease;
+        }
+
+        .avatar-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 5px solid #0072ff;
+        }
+
+        .avatar-icon {
+            font-size: 2.5rem;
+        }
+
+        .speech-bubble {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: #0072ff;
+        }
+
+        .example-box {
+            background-color: #fff9e6;
+            border-left: 4px solid #ffb703;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-option {
+            background-color: #f8f9fa;
+            border: 2px solid #dcdfe6;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .btn-option:hover {
+            background-color: #eef5ff;
+            border-color: #0072ff;
+        }
+
+        .btn-primary {
+            background: #0072ff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #005bb5;
+        }
+
+        .feedback-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        .feedback-correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback-incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Cabeçalho -->
+        <header>
+            <h1>Missão Lógica: Desafio dos Robôs</h1>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+        </header>
+
+        <!-- Personagem Guia -->
+        <div class="avatar-container">
+            <div class="avatar-icon">🤖</div>
+            <div class="speech-bubble" id="speech-bubble">
+                Olá! Sou o Robô Byte. Vamos aprender Lógica de Programação juntos?
+            </div>
+        </div>
+
+        <!-- Tela do Jogo / Conteúdo Dinâmico -->
+        <main id="card-content">
+            <!-- Conteúdo carregado via JavaScript -->
+        </main>
+
+        <!-- Rodapé -->
+        <footer>
+            <p>IFPA Campus Castanhal | Licenciatura em Informática</p>
+        </footer>
+    </div>
+
+    <script>
+        // Dados das etapas e desafios do jogo
+        const steps = [
+            {
+                type: "welcome",
+                title: "Bem-vindo à Missão Lógica!",
+                guideText: "Olá! Eu sou o Robô Byte 🤖. Hoje vamos explorar os Operadores Lógicos: E, OU e NÃO. Eles ajudam os computadores a tomarem decisões!",
+                content: "<p>Pronto para começar sua jornada no Pensamento Computacional?</p>",
+                buttonText: "Iniciar Missão"
+            },
+            // Operador E (AND)
+            {
+                type: "concept",
+                title: "Operador E (AND)",
+                guideText: "O operador E exige que TODAS as condições sejam verdadeiras ao mesmo tempo!",
+                content: `
+                    <p>Para o resultado ser <strong>VERDADEIRO</strong>, a Condição 1 <strong>E</strong> a Condição 2 precisam acontecer.</p>
+                    <div class="example-box">
+                        💡 <strong>Exemplo do cotidiano:</strong> Uma porta do laboratório só abre se o robô tiver a <strong>Chave E a Senha correta</strong>. Se faltar um dos dois, a porta continua fechada!
+                    </div>
+                `,
+                buttonText: "Ir para o Desafio E"
+            },
+            {
+                type: "quiz",
+                title: "Desafio 1: Operador E",
+                guideText: "Analise as condições e me ajude a tomar a decisão correta!",
+                question: "Um robô precisa entrar no laboratório. A regra é: Ter o Cartão de Acesso E falar a Senha. O robô TEM o cartão, mas NÃO SABE a senha. O robô consegue entrar?",
+                options: [
+                    { text: "Sim, pois ele tem o cartão de acesso.", correct: false, explanation: "Incorreto. O operador E exige que AMBAS as condições sejam atendidas. Faltou a senha!" },
+                    { text: "Não, pois o operador E exige cartão E senha ao mesmo tempo.", correct: true, explanation: "Correto! 🎉 Com o operador E, se uma das condições for falsa, o resultado final é FALSO." },
+                    { text: "Sim, pois ter o cartão é mais importante que a senha.", correct: false, explanation: "Incorreto. Na lógica, o operador E trata todas as condições com a mesma exigência." }
+                ]
+            },
+            // Operador OU (OR)
+            {
+                type: "concept",
+                title: "Operador OU (OR)",
+                guideText: "O operador OU é mais flexível: basta que PELO MENOS UMA condição seja verdadeira!",
+                content: `
+                    <p>O resultado será <strong>VERDADEIRO</strong> se a Condição 1 <strong>OU</strong> a Condição 2 (ou ambas) forem atendidas.</p>
+                    <div class="example-box">
+                        💡 <strong>Exemplo do cotidiano:</strong> O robô ganha um desconto se apresentar o <strong>Cupom OU o Cartão do Estudante</strong>. Apresentando qualquer um dos dois, ele ganha o desconto!
+                    </div>
+                `,
+                buttonText: "Ir para o Desafio OU"
+            },
+            {
+                type: "quiz",
+                title: "Desafio 2: Operador OU",
+                guideText: "Preste atenção na regra do OU!",
+                question: "Para o Robô entrar na sala, ele precisa ter a Digital cadastrada OU a Autorização escrita. O robô NÃO TEM a digital, mas TEM a Autorização escrita. Ele pode entrar?",
+                options: [
+                    { text: "Sim, porque no operador OU basta que pelo menos uma condição seja verdadeira.", correct: true, explanation: "Excelente! 🚀 No operador OU, como ele possui a Autorização, a entrada é permitida." },
+                    { text: "Não, ele precisa obrigatoriamente das duas coisas.", correct: false, explanation: "Incorreto. Exigir as duas coisas é a regra do operador E, não do OU." },
+                    { text: "Não, sem a digital ninguém entra.", correct: false, explanation: "Incorreto. A regra diz que a autorização escrita também é válida." }
+                ]
+            },
+            // Operador NÃO (NOT)
+            {
+                type: "concept",
+                title: "Operador NÃO (NOT)",
+                guideText: "O operador NÃO é o inversor da lógica. Ele inverte o valor de verdadeiro para falso e vice-versa!",
+                content: `
+                    <p>Se algo é <strong>Verdadeiro</strong>, aplicar o <strong>NÃO</strong> torna o resultado <strong>Falso</strong>.</p>
+                    <div class="example-box">
+                        💡 <strong>Exemplo do cotidiano:</strong> O alarme toca se <strong>NÃO estiver de dia</strong> (ou seja, se for noite).
+                    </div>
+                `,
+                buttonText: "Ir para o Desafio NÃO"
+            },
+            {
+                type: "quiz",
+                title: "Desafio 3: Operador NÃO",
+                guideText: "Vamos testar a inversão lógica!",
+                question: "A regra de segurança do robô diz: 'Avance apenas se NÃO houver obstáculo'. Os sensores detectaram que 'Existe um obstáculo na frente' (Verdadeiro). O que o robô deve fazer?",
+                options: [
+                    { text: "Avançar, pois existe um obstáculo.", correct: false, explanation: "Incorreto. A ordem é avançar apenas se NÃO houver obstáculo." },
+                    { text: "Parar/Não avançar, pois a presença de obstáculo inverte a condição de permissão.", correct: true, explanation: "Perfeito! 👏 Se 'Existe obstáculo' é Verdadeiro, o 'NÃO obstáculo' passa a ser Falso, então ele não pode avançar." }
+                ]
+            },
+            // Conclusão
+            {
+                type: "finish",
+                title: "Missão Concluída! 🎉",
+                guideText: "Parabéns! Você completou os desafios dos operadores lógicos E, OU e NÃO!",
+                content: "<p>Agora você entende a base da tomada de decisões que os programas de computador utilizam todos os dias.</p>",
+                buttonText: "Reiniciar Jogo"
+            }
+        ];
+
+        let currentStep = 0;
+
+        function renderStep() {
+            const step = steps[currentStep];
+            const cardContent = document.getElementById("card-content");
+            const speechBubble = document.getElementById("speech-bubble");
+            const progressBar = document.getElementById("progress-bar");
+
+            // Atualiza a barra de progresso
+            const progressPercent = ((currentStep) / (steps.length - 1)) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            // Atualiza a fala do personagem
+            speechBubble.innerText = step.guideText;
+
+            // Renderiza telas conceituais / boas-vindas / final
+            if (step.type === "welcome" || step.type === "concept" || step.type === "finish") {
+                cardContent.innerHTML = `
+                    <h2 class="card-title">${step.title}</h2>
+                    ${step.content}
+                    <button class="btn-primary" onclick="nextStep()">${step.buttonText}</button>
+                `;
+            } 
+            // Renderiza desafios
+            else if (step.type === "quiz") {
+                let optionsHTML = step.options.map((opt, index) => `
+                    <button class="btn-option" onclick="checkAnswer(${index})">${opt.text}</button>
+                `).join("");
+
+                cardContent.innerHTML = `
+                    <h2 class="card-title">${step.title}</h2>
+                    <p style="margin-bottom: 10px;"><strong>Pergunta:</strong> ${step.question}</p>
+                    <div class="options-container" id="options-container">
+                        ${optionsHTML}
+                    </div>
+                    <div id="feedback-area"></div>
+                `;
+            }
+        }
+
+        function checkAnswer(selectedIndex) {
+            const step = steps[currentStep];
+            const selectedOption = step.options[selectedIndex];
+            const feedbackArea = document.getElementById("feedback-area");
+            const optionsContainer = document.getElementById("options-container");
+
+            // Desabilita os botões após a escolha
+            const buttons = optionsContainer.querySelectorAll("button");
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selectedOption.correct) {
+                feedbackArea.innerHTML = `
+                    <div class="feedback-box feedback-correct">
+                        <strong>Resposta Correta!</strong><br>${selectedOption.explanation}
+                    </div>
+                    <button class="btn-primary" onclick="nextStep()">Próxima Etapa ➔</button>
+                `;
+            } else {
+                feedbackArea.innerHTML = `
+                    <div class="feedback-box feedback-incorrect">
+                        <strong>Ops, resposta incorreta!</strong><br>${selectedOption.explanation}
+                    </div>
+                    <button class="btn-primary" style="background-color: #6c757d;" onclick="renderStep()">Tentar Novamente 🔄</button>
+                `;
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+            } else {
+                currentStep = 0; // Reinicia o jogo no final
+            }
+            renderStep();
+        }
+
+        // Inicializa o jogo ao carregar a página
+        document.addEventListener("DOMContentLoaded", renderStep);
+    </script>
+</body>
+</html>
